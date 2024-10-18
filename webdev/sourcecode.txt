@@ -1,0 +1,34 @@
+
+auth.onAuthStateChanged(user => {
+    if (user) {
+        // Jika user login, cek apakah mereka admin
+        db.collection('users').doc(user.uid).get()
+            .then(doc => {
+                if (doc.exists) {
+                    const userData = doc.data();
+                    if (userData.role === 'admin') {
+                        // Jika admin, biarkan akses halaman admin
+                        console.log("User is admin");
+                    } else {
+                        // Jika bukan admin, arahkan ke halaman user
+                        window.location.href = 'user_dashboard.html';
+                    }
+                } else {
+                    console.log("No such document!");
+                    window.location.href = 'index.html'; // Arahkan ke halaman login jika tidak ada data user
+                }
+            })
+            .catch(error => {
+                console.log("Error getting document:", error);
+                window.location.href = 'index.html'; // Arahkan ke halaman login jika terjadi error
+            });
+    } else {
+        // Jika pengguna belum login, arahkan ke halaman login
+        window.location.href = 'index.html';
+    }
+});
+
+
+const user=userCredential.user;
+localStorage.setItem('loggedInUserId', user.uid);
+window.location.href='homepage.html';
